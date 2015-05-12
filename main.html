@@ -1,0 +1,799 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    
+    <meta http-equiv="Content-type" name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>KosherDate</title>
+    	 
+ 	
+ 	<!-- <link rel="stylesheet" href="js/jquery.mobile-1.3.1/jquery.mobile-1.3.1.min.css" />  -->
+ 	<link rel="stylesheet" href="js/rtl/rtl.jquery.mobile-1.3.0.min.css" />
+ 	<link rel="stylesheet" href="js/jquery.mobile-1.3.1/kosherdate-theme.min.css" /> 	
+	<link rel="stylesheet" href="css/index.css" />    
+	
+    <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+	
+	<!-- <script src="js/jquery.mobile-1.3.1/jquery.mobile-1.3.1.min.js"></script>-->
+	<script src="js/rtl/rtl.jquery.mobile-1.3.0.min.js"></script>
+	
+	<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+	<!-- <script type="text/javascript" charset="utf-8" src="PushNotification.js"></script> -->	
+	<script type="text/javascript" charset="utf-8" src="js/index.js"></script>
+		
+	<!-- Add fancyBox -->
+	<link rel="stylesheet" href="js/fancybox/source/jquery.fancybox.css?v=2.1.3" type="text/css" media="screen" />
+	<script type="text/javascript" src="js/fancybox/source/jquery.fancybox.pack.js?v=2.1.3"></script>	
+</head>
+ 
+<body onLoad="initFastButtons();">
+	<input type="hidden" id="back_page" value="main_page" />
+	<div data-role="page" class="page" id="mainContainer">
+		<!--Start Header-->
+			
+		<div id="header">
+			<div id="logo" onclick="app.chooseMainPage();"></div>
+			<div class="new_mes" onclick="app.getMessenger();"><div class="text_mes">תיבת הודעות</div><div class="new_mes_count2"></div></div>									
+			<div id="top_right_buttons">
+				<div id="contact" onclick="app.contact();"></div>
+				<div id="back" onclick="app.back();"></div>				
+			</div>
+			<div id="top_left_buttons">					
+				<div id="logout" onclick="app.logout();"></div>
+				<div id="sign_up" onclick="app.register();"></div>
+			</div>
+		</div>			
+		<!--Stop Header-->
+		
+
+		<!--Start Login Page -->
+		<div id="login_page" class="appPage">
+			<div data-role="content" class="bg_white">
+				<div class="content_wrap"> 			
+					<div id="authForm" name="authForm" data-role="none">
+						<!-- mar_top_8 -->
+						<!-- <div id="user_txt" class="mar_top_8">אימייל או </br>כינוי באנגלית</div> -->
+						<div id="user_input"><input placeholder="הקלד שם משתמש או דוא”ל" type="text" name="email" class="email" value="" data-role="none" maxlength="50" /></div>
+						<div class="clear"></div>
+						<!-- <div id="pass_txt" class="lineHeight_50">סיסמה</div> -->
+						<div id="pass_input"><input placeholder="סיסמא" type="password" name="password" class="password" value="" maxlength="50" data-role="none" /></div>
+						<div class="clear"></div>
+						<!-- <label><input type="checkbox" name="remember_me" value="remember_me"  /> <span>remember me</span> </label>  -->
+						<!-- <div id="fog_pass"><a href="#" rel="external" data-ajax="false">I've forgot my password</a></div>  -->
+						<div id="login" onclick="app.sendAuthData();"></div>
+						<a href="#" onclick="app.recovery();" title="title" id="forgot">שכחתי את הסיסמא</a>
+						<!--<div class="left mar_l_10"><input type="button" value="כניסה" onclick="app.sendAuthData();" data-theme="a"></div>-->
+						<div class="clear"></div>
+					</div>								
+				</div>				
+			</div>			
+		</div>
+		<!--End Login Page -->
+		
+		
+		<!-- Start Recovery Page -->
+		<div id="recovery_page" class="appPage">
+			<div data-role="content" data-scroll="false">
+				<div class="content_wrap">
+					<h1>שלחו לי סיסמה</h1>
+					<div class="dots"></div>
+            		<div data-role="none" id="form_recovery">
+                		<input type="hidden" name="page" data-role="none" value="recovery" />
+                		<!--<label for="email">Correo Electrónico</label>-->
+               		 	<div id="user_input"><input id="user" class="inpi" placeholder="דואל" type="text" name="email" data-role="none" /></div>
+                		<div class="clear" data-role="none"></div>
+                		<button class="form_button" data-role="none" onclick="app.sendRecovery();">המשך</button>
+                		<div class="clear"></div> 
+            		</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Recovery Page -->
+		
+		
+		<!--Start Main Page -->
+		<div id="main_page"  class="appPage">
+			<div data-role="content" data-scroll="false">
+				<div class="content_wrap">
+					<!-- <a href="#" class="mainBut" onclick="app.getOnlineNow();"><div id="friends_online"></div></a>
+					<a href="#" class="mainBut" onclick="app.getSearchForm();"><div id="search_friends"></div></a>
+					<a href="#" class="mainBut" onclick="app.getMyProfileData();"><div id="profile"></div></a>   
+					<a href="#" class="mainBut" onclick="app.getMessenger();" class="no_dec">
+						<div id="mail_box"><div id="new_mes_count"></div></div>
+					</a> -->
+					<ul>
+		                <li onclick="app.getSearchForm();"><a href="" title="title" id="searchRS">חיפוש חברים</a></li>
+		                <li onclick="app.getOnlineNow();"><a href="" title="title" id="onlineFri">חברים אונליין</a></li>
+		                <li onclick="app.getMessenger();"><a href="" title="title" id="massBox">תיבת הודעות</a></li>
+		                <li onclick="app.getStatUsers('lookedMe');"><a href="" title="title" id="watchMe">צפו בי</a></li>
+		                <li onclick="app.getStatUsers('looked');"><a href="" title="title" id="Iwatch">צפיתי בהם</a></li>
+		                <li onclick="app.getStatUsers('contactedMe');"><a href="" title="title" id="contactedThem">פניתי אליהם</a></li>
+		                <li onclick="app.getStatUsers('friends');"><a href="" title="title" id="myFavorite">המועדפים שלי</a></li>
+		                <li onclick="app.getMyProfileData();"><a href="" title="title" id="myPro">פרופיל אישי</a></li>
+		                <li onclick="app.getEditProfile();"><a href="" title="title" id="editPro">עדכון פרופיל</a></li>
+		            </ul>
+					<div class="clear"></div>	
+					<!-- <button onclick="app.getRegStep();"></button> -->			
+					<a href="#" id="bannerLink"><div id="why_subscr"><button data-role="none">לרכישת מנוי להץ כאן</button></div></a>					
+				</div>					
+			</div>		
+		</div>
+		<!--End Main Page -->
+		
+		
+		<!--Start Users List Page -->
+		<div id="users_list_page"  class="appPage">
+			<div data-role="content" data-scroll="false">
+				<div class="sortButton" id="sortByDistance">
+					<div class="bg_button" onclick="app.sortByDistance();">
+						<!--<img class="left" src="images/bg_button_l.png" />-->
+						<div class="but_c">מי קרוב אלי</div>
+						<!--<img class="left" src="images/bg_button_r.png" />-->
+					</div>
+					<!-- <input type="button" onclick="app.sortByDistance();" value="מי קרוב אלי" data-theme="a"> -->
+				</div>
+				<div class="sortButton" id="sortByEntranceTime">
+					<div class="bg_button" onclick="app.sortByEntranceTime();">
+						<!--<img class="left" src="images/bg_button_l.png" />-->
+						<div class="but_c">לתוצאות הקודמות</div>
+						<!--<img class="left" src="images/bg_button_r.png" />-->
+					</div>
+					<!-- <input type="button" onclick="app.sortByEntranceTime();" value="לתוצאות הקודמות" data-theme="a"> -->
+				</div>
+				<div class="clear"></div>
+				<div class="content_wrap"></div>					
+			</div>
+		</div>
+		<!--End Users List Page -->		
+		
+		
+		<!--Start My Profile Page -->
+		<div id="my_profile_page" class="appPage">					
+			<div class="myProfileWrap">
+				<div data-role="content" data-scroll="false" class="myProf">
+					<h1>הפרופיל שלי</h1>
+					<div class="dots"></div>				
+					<div id="my_info_wrap">
+						<div id="my_info">
+							<div class="special4"></div>
+							<div class="user_pic left">
+								<img alt="" src="" />										
+							</div>
+							<div class="txt">					
+								<strong><span></span></strong><br />
+								<span></span><br />						
+							</div>
+						</div>
+					</div>
+					<div id="my_buttons">
+						<br />						
+						<div id="get_stat_div"><button data-theme="a" id="get_stat">סטטיסטיקה</button></div>	
+						<div id="upload_image_div"><button data-theme="a" id="upload_image">נהל תמונות</button></div>											
+					</div>
+				</div>
+			<!-- <div class="grey_line2"></div> -->
+				<div data-role="content" data-scroll="false" id="statistics">
+					<div class="stat_side">
+						<div class="items_wrap">
+							<div class="stat_title" onclick="if($(this).next().text()!='0')app.getStatUsers('addedMeToFriends');">צורפתי למועדפים<!-- Added You To Friends --></div>
+							<div class="stat_value" onclick="if($(this).text()!='0')app.getStatUsers('addedMeToFriends');">154</div>
+						</div>
+						<div class="items_wrap">
+							<div class="stat_title" onclick="if($(this).next().text()!='0')app.getStatUsers('contactedMe');">פניתי אליהם<!-- Contacted You --></div>
+							<div class="stat_value" onclick="if($(this).text()!='0')app.getStatUsers('contactedMe');">229</div>
+						</div>
+						<div class="items_wrap">
+							<div class="stat_title" onclick="if($(this).next().text()!='0')app.getStatUsers('looked');"><!-- Viewed Your Profile -->צפיתי בהם</div>
+							<div class="stat_value" onclick="if($(this).text()!='0')app.getStatUsers('looked');">2</div>
+						</div>
+					</div>
+					<div class="stat_side">
+						<div class="items_wrap">
+							<div class="stat_title" onclick="if($(this).next().text()!='0')app.getStatUsers('friends');">מועדפים<!-- Added To Friends --></div>
+							<div class="stat_value" onclick="if($(this).text()!='0')app.getStatUsers('friends');">55</div>
+						</div>
+						<div class="items_wrap">
+							<div class="stat_title" onclick="if($(this).next().text()!='0')app.getStatUsers('blackList');"><!-- Added To Black List -->רשימה שחורה</div>
+							<div class="stat_value" onclick="if($(this).text()!='0')app.getStatUsers('blackList');">118</div>
+						</div>
+						<div class="items_wrap">
+							<div class="stat_title" onclick="if($(this).next().text()!='0')app.getStatUsers('contactedThem');">פנו אלי<!-- Contacted --></div> 
+							<div class="stat_value" onclick="if($(this).text()!='0')app.getStatUsers('contactedThem');">3</div>
+						</div>
+					</div>
+				</div>
+
+				<div id="uploadDiv">
+					<div data-role="content" data-scroll="false">
+						<button class="take_a_photo" data-theme="a" onclick="app.capturePhoto(app.pictureSource.CAMERA, app.destinationType.FILE_URI);">הפעל מצלמה</button>
+						
+						<button class="choose_from_library" data-theme="a" onclick="app.capturePhoto(app.pictureSource.PHOTOLIBRARY, app.destinationType.FILE_URI);">תמונה מגלריה</button>
+						
+						<button class="my_images" data-theme="a" onclick="app.displayUserImages();">תמונות שלי</button>
+						<!-- 
+						<div class="up_buttons take_a_photo" onclick="app.capturePhoto(app.pictureSource.CAMERA, app.destinationType.FILE_URI);"></div>
+						<div class="up_buttons choose_from_library" onclick="app.capturePhoto(app.pictureSource.PHOTOLIBRARY, app.destinationType.FILE_URI);"></div>
+						<div class="up_buttons my_images" onclick="app.displayUserImages();"></div>
+						-->						
+						<!-- <img src="images/welcome.jpg" alt="" id="myNewPhoto" />  -->
+						<!-- <script>
+							$(document).ready(
+								function(){			
+									$('#myNewPhoto').Jcrop({
+										onChange: showPreview,
+										onSelect: showPreview,
+										aspectRatio: 1
+									});   	
+								}
+							);
+							function showPreview(coords)
+							{
+								var rx = 100 / coords.w;
+								var ry = 100 / coords.h;
+								$('#preview').css({
+									width: Math.round(rx * 500) + 'px',
+									height: Math.round(ry * 370) + 'px',
+									marginLeft: '-' + Math.round(rx * coords.x) + 'px',
+									marginTop: '-' + Math.round(ry * coords.y) + 'px'
+								});
+							}
+						</script>-->
+					</div>
+				</div>
+			</div>
+		</div> 
+		<!--End My Profile Page -->
+		
+		
+		<!--Start Search From Page -->
+		<div id="search_form_page"  class="appPage">
+			<div data-role="content" data-scroll="false">
+				<div class="content_wrap">
+					<h1>חיפוש חברים</h1>
+					<div class="dots"></div>
+					<form action="" method="post" id="searchForm" name="searchForm">
+						<div id="regions_wrap">
+							<div class="sf_txt">איזור</div>				
+							<div class="sf_sel_wrap regionsList"></div>					
+						</div>
+						<div class="clear"></div>
+						<div id="religion_wrap"> 
+							<div class="sf_txt">השקפה</div>				
+							<div class="sf_sel_wrap religionList"></div>	
+						</div>				
+						<div class="clear"></div>	 	
+						<div class="sf_txt" id="birth_wrap">גיל</div>				
+						<div class="sf_sel_wrap">
+							<div class="sf_txt2">מ</div>
+							<div class="sf_sel_wrap2 age_1"></div> 
+							<div class="sf_txt2">עד</div>
+							<div class="sf_sel_wrap2 age_2"></div>
+						</div>						
+						<div class="sf_txt mar_top_13" style="display:none;">מין</div>									
+						<div class="sf_sel_wrap gen" style="display:none;">
+							<fieldset data-role="controlgroup" data-type="horizontal">
+								<input type="radio" name="gen" id="radioM" value="1" checked="checked">
+								<label for="radioM">זכר</label>
+								<input type="radio" name="gen" id="radioF" value="0">
+								<label for="radioF">נקבה</label>
+							</fieldset>			
+						</div><!-- --> 
+						<div class="sf_txt mar_top_13">כינוי</div>				
+						<div class="sf_sel_wrap">
+							<input type="text" class="nickName" value="" />
+						</div>
+						<div id="right_buttons">										
+							<input type="button" data-theme="a" value="חיפוש" onclick="app.search();">
+						</div>
+					</form>
+				</div>					
+			</div>
+		</div>
+		<!--End Search From Page -->
+		
+		
+		
+		<!--Start Profile Page -->
+		<div id="user_profile_page"  class="appPage">
+			<div data-role="content">
+				<div class="content_wrap">
+					<h1>הפרופיל של <span></span></h1>
+					<div class="dots"></div>
+					<div id="user_profile">
+						<div id="user_pictures">
+							<div class="pic_wrap" style="z-index:555;"><!-- class="<?if(empty($this->vars['pic_2']) and empty($this->vars['pic_3']) ):?>pic_wrap_center<?else:?>pic_wrap<?endif;?>" -->
+								<a href="#" class="fancybox" rel="images">
+									<img src="" alt="" id="pic1" />
+								</a>
+								<div class="gal_top_icons">				
+									<div class="special3 right"></div>
+									<div class="blue_star right"></div>						
+								</div>
+								<div class="on5"></div>
+								<div class="distance_value"><span></span></div>
+							</div>
+							<div class="pic_wrap">
+								<a href="#" class="fancybox" rel=""><img src="" id="pic2" /></a>
+							</div>
+							<div class="pic_wrap">
+								<a href="#" class="fancybox" rel=""><img src="" id="pic3" /></a>
+							</div>
+						</div>
+						<div class="clear"></div>
+						<div id="user_details"></div>
+					</div>
+				</div>					
+			</div>		
+		</div>
+		<!--End Profile Page -->					
+					
+			
+		<!--Start Messenger Page -->
+		<div id="messenger_page"  class="appPage"> 
+			<div data-role="content">
+				<div class="content_wrap">
+					<h1>תיבת הודעות</h1>
+					<div class="dots"></div>
+					<div class="chats_wrap"></div>			
+				</div>					
+			</div>		
+		</div>
+		<!--End Messenger Page -->		
+		
+		
+		<!--Start Chat Page -->
+		<div id="chat_page"  class="appPage"> 
+			<div data-role="content">
+				<div class="content_wrap">
+					<h1>שיחה עם <span></span></h1>
+					<div class="dots"></div>
+					<div class="sendMessDiv">
+						<div class="sendMessButDiv"><button class="sendMes" data-theme="a" onclick="app.sendMessage();">שלח</button></div>
+						<div class="messField"><textarea id="message"></textarea></div>
+					</div>
+					<div class="clear"></div>
+					<div class="chat_wrap"></div>			
+				</div>					
+			</div>		
+		</div>
+		<!--End Chat Page -->
+		
+		
+		<!--Start Edit Profile Page -->
+		<div id="edit_profile_page"  class="appPage"> 
+			<div data-role="content">
+				<div class="content_wrap">
+					<h1>עריכת פרופיל</h1>
+					<div class="dots"></div>					
+					<div class="clear"></div>
+					<button class="my_images" data-theme="a" onclick="app.displayUserImages();">תמונות שלי</button>
+					<div class="edit_wrap">
+						
+					</div>			
+				</div>					
+			</div>		
+		</div>
+		<!--End Edit Profile Page -->
+			
+		
+		<!--Start Delete Images Page -->
+		<div id="delete_images_page"  class="appPage"> 
+			<div data-role="content">
+				<div class="content_wrap">
+					<h1>תמונות שלי</h1>
+					<div class="dots"></div>
+					<div class="imagesButtonsWrap">	
+						<button class="take_a_photo" data-theme="a" onclick="app.capturePhoto(app.pictureSource.CAMERA, app.destinationType.FILE_URI);">הפעל מצלמה</button>
+						<button class="choose_from_library" data-theme="a" onclick="app.capturePhoto(app.pictureSource.PHOTOLIBRARY, app.destinationType.FILE_URI);">תמונה מגלריה</button>
+						<!-- 
+						<div class="up_buttons take_a_photo" onclick="app.capturePhoto(app.pictureSource.CAMERA, app.destinationType.FILE_URI);"></div>
+						<div class="up_buttons choose_from_library" onclick="app.capturePhoto(app.pictureSource.PHOTOLIBRARY, app.destinationType.FILE_URI);"></div>
+						-->
+						<div class="dots"></div>						
+					</div>
+					<div class="imagesListWrap"></div>
+				</div>					
+			</div>		
+		</div>
+		<!--End Delete Images Page -->
+		
+		
+		<!--Start Upload Image Page -->
+		<div id="upload_image_page"  class="appPage"> 
+			<div data-role="content">
+				<div class="content_wrap">
+					<h1>העלאת תמונה</h1>
+					<div class="dots"></div>
+					<div class="regInfo"></div>					
+					<button class="take_a_photo" data-theme="a" onclick="app.capturePhoto(app.pictureSource.CAMERA, app.destinationType.FILE_URI);">הפעל מצלמה</button>
+					<button class="choose_from_library" data-theme="a" onclick="app.capturePhoto(app.pictureSource.PHOTOLIBRARY, app.destinationType.FILE_URI);">תמונה מגלריה</button>
+					<button class="my_images" data-theme="a" onclick="app.displayUserImages();">תמונות שלי</button>
+					<button class="continue" data-theme="a" onclick="app.chooseMainPage();">המשך</button>					
+				</div>					
+			</div> 	
+		</div>
+		<!--End Upload Image Page -->		
+		
+		
+		<!--Start Register Page -->
+		<div id="register_page"  class="appPage"> 
+			<div data-role="content">
+				<div class="content_wrap">
+					<h1>הרשמה</h1>
+					<div class="dots"></div>
+					<div class="regFormWrap">
+						<form id="regForm" data-role="none" onsubmit="return false;">
+							<div class="regTxt lineHeight_50">כינוי</div>
+							<div class="regInput" style="widht:165px;position:reletive;float:right;">
+								<div class="userNickState">
+									<div class="userOk">פנוי</div>
+									<div class="userFailed">תפוס</div>
+								</div>
+								<input type="text" onkeyup="app.delRed(this);app.checkUserFields(this.id,this.value);" onclick="app.delRed(this);" name="userNick" id="userNick" data-role="none" maxlength="50" />
+							</div>
+							<div class="clear"></div>
+							<div class="regTxt lineHeight_50">סיסמה</div><div class="regInput"><input type="password" onkeyup="app.delRed(this);" onclick="app.delRed(this);" name="userPass" id="userPass" maxlength="50" data-role="none" /></div>
+							<div class="clear"></div>
+							<div class="regTxt mar_top_8">סיסמה בשנית</div><div class="regInput"><input type="password" onkeyup="app.delRed(this);" onclick="app.delRed(this);" name="userPass2" id="userPass2" maxlength="50" data-role="none" /></div>
+							<div class="clear"></div>
+							<div class="regTxt mar_top_8">אימייל</div>
+							<div class="regInput" style="widht:165px;position:reletive;float:right;">
+								<div class="userEmailState">
+                                    <div class="userFailed">תפוס</div>
+								</div>
+								<input type="text" name="userEmail" onkeyup="app.delRed(this);app.checkUserFields(this.id,this.value);" onclick="app.delRed(this);" id="userEmail" data-role="none" maxlength="50" />
+							</div>
+							<div class="clear"></div>
+							<div class="regTxt lineHeight_50">מין</div>
+							<div class="regInput">
+								<select name="userGender" id="userGender" value="" data-iconpos="left" class="inpi2" >
+									<option value>לבחור מין</option>
+	                                <option value="1" >גבר</option>
+	                                <option value="0" >אישה</option>
+	                            </select>
+								<!-- <fieldset data-role="controlgroup" data-type="horizontal">
+								    <input type="radio" name="userGender" id="radio-male" value="1" checked="checked">
+								    <label for="radio-male">Hombre</label>
+								    <input type="radio" name="userGender" id="radio-female" value="0">
+								    <label for="radio-female">Mujer</label>
+								</fieldset> -->
+							</div>
+							<div class="clear"></div>
+							<div class="regTxt lineHeight_50" id="regions_wrap">איזור</div>				
+							<div class="regInput regionsList"></div>					
+							<div class="clear"></div>							
+							<div class="regTxt lineHeight_50" id="city_wrap">עיר</div>
+							<div class="regInput"><input type="text" name="cityName" onkeyup="app.delRed(this);" onclick="app.delRed(this);" id="userCityName" maxlength="50" data-role="none" /></div>					
+							<div class="clear"></div>
+							<div class="regTxt lineHeight_50" id="religion_wrap">השקפה</div>				
+							<div class="regInput religionList"></div>					
+							<div class="clear"></div>	 
+							<div class="regTxt lineHeight_50" id="fName_wrap">שם פרטי</div>
+							<div class="regInput"><input type="text" name="userfName" onkeyup="app.delRed(this);" onclick="app.delRed(this);" id="userfName" maxlength="50" data-role="none" /></div>					
+							<div class="clear"></div>
+							<div class="regTxt mar_top_8" id="lName_wrap">שם משפחה</div>
+							<div class="regInput"><input type="text" name="userlName" onkeyup="app.delRed(this);" onclick="app.delRed(this);" id="userlName" maxlength="50" data-role="none" /></div>					
+							<div class="clear"></div>
+							<div class="regTxt bold lineHeight_50" id="birth_wrap">ת. לידה</div>						
+							<div class="regInput">
+								<div id="birthDate" class="left"></div>
+							</div>
+							<div class="clear"></div>
+							<!-- <div class="regTxt mar_top_8">Sexual Preference</div>
+							<div class="regInput">
+								<select name="sexPrefId" class="sex_preference_list"></select>
+							</div>
+							<div class="clear"></div>
+							<div class="regTxt lineHeight_50">Country</div>
+							<div class="regInput">						
+								<select name="countryCode" id="countries_list">
+									<option value="">Choose Country</option>													
+								</select>
+							</div>
+							<div class="clear"></div> -->
+							<!-- <div class="regTxt lineHeight_50" id="regions_wrap">איזור</div>				
+							<div class="regInput regionsList"></div>					
+							<div class="clear"></div> 
+							<div class="regTxt lineHeight_50" id="cities_wrap">עיר</div>				
+							<div class="regInput"><input type="text" name="userCity" id="userCity" maxlength="50" data-role="none" /></div>											
+							<div class="clear"></div>-->
+							<!-- <div class="regTxt mar_top_8" id="cities_wrap">Número de telefóno</div>				
+							<div class="regInput"><input type="text" name="userPhone" id="userPhone" maxlength="50" data-role="none" /></div>											
+							<div class="clear"></div> -->
+							<!-- <div class="regTxt lineHeight_50">Zip Code</div><div class="regInput"><input type="text" name="zipCode" data-role="none" maxlength="50" /></div>
+							<div class="clear"></div>
+							<div class="regTxt mar_top_8">Country of Origin</div>
+							<div class="regInput">						
+								<select name="countryOfOriginCode" id="countries_list2">
+									<option value="">Choose Country</option>													
+								</select>
+							</div>
+							<div class="clear"></div>
+							<br />
+							<br />
+							<div class="bold">I confirm that I have read and agreed to the Terms and Conditions of Service of membership at Dating4disabled.com.</div>
+							<div class="clear"></div>
+							<div data-role="fieldcontain">
+								<select name="confirm" id="confirm" data-role="slider" data-theme="c" data-track-theme="c">
+								<option value="0">לא</option>
+								<option value="1">כן</option>
+								</select>
+							</div>
+							<br /> -->
+							<!-- <label><input type="checkbox" name="remember_me" value="remember_me"  /> <span>remember me</span> </label>  -->
+						</form>
+						<button data-theme="a" onclick="app.sendRegData();">הרשמה</button>  
+						<br /><br />
+						<br /><br />
+						<br /><br />
+					</div>
+				</div>					
+			</div>		
+		</div>
+		<!--End Register Page -->
+	
+	</div>
+	
+	<div class="appTemplates">
+	
+		<!-- START User Data Template -->	 
+			<div id="userDataTemplate">	
+				<div class="user_data">					
+					<div class="user_photo_wrap">							
+						<div class="user_pic" style="background: url([IMAGE]) no-repeat;"></div>
+					</div>
+					<div class="user_short_txt">
+						<strong>[USERNICK], <span>[AGE]</span></strong><br />						
+						<span> [CITY]</span><br />					
+						[ABOUT]							
+					</div>				
+					<div class="send_mes" onclick="app.getChat([USER_ID],'[USERNICK]');"><span>שליחת הודעה</span></div>
+					<div class="on2"></div>
+					<div class="on1"></div>
+					<a href="" data-transition="slide">
+						<div class="gal_top_icons">				
+							<!-- Is Paying -->		
+							<div class="special3 left"></div>
+							<!-- Is New -->							
+							<div class="blue_star left"></div>
+						</div>
+					</a>					
+					<div class="distance_value"><span></span></div>				
+				</div>
+			</div>
+			<!-- END User Data Template -->
+			
+			
+			<!-- START Edit Profile Template -->
+			<div id="editProfileTemplate">
+						<div class="sf_txt"><span>שם משתמש</span></div>
+			            <div class="sf_sel_wrap">
+			                <div class="save" style="display: none;" >
+			                    <div style="float: right;width: 70%;" ><input type="text" name="userNick" id="Nick" class="inpi" value="[userNick]" onclick="$(this).css({'background':'none'});" onkeyup="$(this).css({'background':'none'});check(this.id,this.value);" /></div>			                
+			                    <div class="clear" data-role="none"></div>
+			                    <button data-role="none" name="submit" onclick="app.saveProf(this,'input');return false;" class="formButton">שמירה</button>
+			                    <button data-role="none" name="cancel" id="cancelNick" onclick="app.editProf(this);return false;" class="formButton">ביטול</button>
+			                </div>
+			                <div class="edit"><div style="float: right;width: 70%">[userNick]</div><button data-role="none" onclick="app.editProf(this);return false;" name="edit" class="formButton">לשנות</button></div>
+			            </div>
+			            <div class="sf_txt"><span>סיסמה</span></div>
+			            <div class="sf_sel_wrap">
+			                <div class="save" style="display: none; position: relative;" >
+			                    <div style="width: 70%;float: right;">
+			                        <input type="password" name="userPass" id="userPass" value="[userPass]" class="inpi" />
+			                    </div>
+			                    <div class="clear" data-role="none"></div>
+			                    <div style="width: 70%;float: right;">
+			                        <input type="password" name="pass2" id="userPass2" value="[userPass]" class="inpi" />
+			                    </div>
+			                    <span style="position: absolute;right: -43%;top:47%;color: #c8c8c9;">סיסמה שנית</span>
+			                    <div class="clear" data-role="none"></div>
+			                    <button data-role="none" name="submit" onclick="app.saveProf(this,'input:first');return false;" class="formButton">שמירה</button>
+			                    <button data-role="none" name="cancel" id="cancelNick" onclick="app.editProf(this);return false;" class="formButton">ביטול</button>
+			                </div>
+			                <div class="edit"><div style="float: right;width: 70%"><input disabled type="password" name="userPass" id="userPass" value="[userPass]" class="inpi" /></div><button data-role="none" onclick="app.editProf(this);return false;" name="edit" class="formButton">לשנות</button></div>
+			            </div>	
+			            <div class="sf_txt"><span>דוא"ל</span></div>
+			            <div class="sf_sel_wrap">
+			                <div class="save" style="display: none;" >
+			                    <div style="float: right;width:70%;" ><input type="text" name="userEmail" id="Email" class="inpi" value="[userEmail]" style="direction: ltr;" onclick="$(this).css({'background':'none'});" onkeyup="$(this).css({'background':'none'});check(this.id,this.value);" /></div>						                    
+			                    <div class="clear" data-role="none"></div>
+			                    <button data-role="none" name="submit" onclick="app.saveProf(this,'input');return false;" class="formButton">שמירה</button>
+			                    <button data-role="none" name="cancel" id="cancelNick" onclick="app.editProf(this);return false;" class="formButton">ביטול</button>
+			                </div>
+			                <div class="edit"><div style="float: right;width: 100%;overflow: hidden;text-overflow: ellipsis;">[userEmail]</div>
+			                    <button data-role="none" style="margin-top:-10px;" onclick="app.editProf(this);return false;" name="edit" class="formButton">לשנות</button></div>
+			            </div>
+			            <div class="sf_txt"><span>איזור</span></div>
+			            <div class="sf_sel_wrap" style="padding-top: 4px;min-height: 43px;">
+			                <div class="save" style="display: none;" >
+			                    <div style="width:70%;margin-bottom:2%;float: right;" class="regionsList">
+			                        <select name="countryRegionId" data-iconpos="left" id="countryRegionId">
+			                            <option value=""></option>
+			                            <!-- <? foreach ($regions['TableValues'] as $countryCode=>$countryName){ ?>
+			                            <option <?=$userInfo[0]['countryRegionId']==$countryCode?'selected="selected" ':''?>value="<?=$countryCode?>"><?=$countryName?></option>
+			                            <? } ?> -->
+			                        </select>
+			                    </div>
+			                    <div class="clear" data-role="none"></div>
+			                    <button data-role="none" name="submit" onclick="app.saveProf(this,'select');return false;" class="formButton">שמירה</button>
+			                    <button data-role="none" name="cancel" id="cancelNick" onclick="app.editProf(this);return false;" class="formButton">ביטול</button>
+			                </div>
+			                <div class="edit"><div style="float: right;width: 70%"></div><button data-role="none" onclick="app.editProf(this);return false;" name="edit" class="formButton">לשנות</button></div>                
+			            </div>                    
+			            <div class="sf_txt"><span>עיר</span></div>
+			            <div class="sf_sel_wrap">  
+			                <div class="save" style="display: none;" >
+			                    <div style="width: 70%;float: right;">
+			                        <input type="text" name="userCity" value="[userCity]" id="CityName" class="inpi" />
+			                    </div>
+			                    <div class="clear" data-role="none"></div>
+			                    <button data-role="none" name="submit" onclick="app.saveProf(this,'input');return false;" class="formButton">שמירה</button>
+			                    <button data-role="none" name="cancel" id="cancelNick" onclick="app.editProf(this);return false;" class="formButton">ביטול</button>
+			                </div>
+			                <div class="edit"><div style="float: right;width: 70%">[userCity]</div><button data-role="none" onclick="app.editProf(this);return false;" name="edit" class="formButton">לשנות</button></div>
+			            </div>
+			            <div class="sf_txt"><span>מין</span></div>
+			            <div class="sf_sel_wrap" style="padding-top: 5px;min-height: 42px;">
+			                <div class="save" style="display: none;" >
+			                	<div style="width:70%;margin-bottom:2%;float:right;" class='userGender'>
+			                		
+			                	</div>			                    
+			                    <div class="clear" data-role="none"></div>
+			                    <button data-role="none" name="submit" onclick="app.saveProf(this,'select');return false;" class="formButton">שמירה</button>
+			                    <button data-role="none" name="cancel" id="cancelNick" onclick="app.editProf(this);return false;" class="formButton">ביטול</button>
+			                </div>
+			                <div class="edit"><div style="float: right;width: 70%">[userGenderName]</div><button data-role="none" onclick="app.editProf(this);return false;" name="edit" class="formButton">לשנות</button></div>
+			            </div>
+			            <div class="sf_txt"><span>קצת על עצמי</span></div>
+			            <div class="sf_sel_wrap">
+			                    <div class="save" style="display: none;" >
+			                    <div style="width: 70%;float: right;">
+			                        <textarea name="userAboutMe" id="userAboutMe" class="inpi" style="min-height:70px;">[userAboutMe]</textarea>
+			                    </div>
+			                    <div class="clear" data-role="none"></div>
+			                    <button data-role="none" name="submit" onclick="app.saveProf(this,'textarea');return false;" class="formButton">שמירה</button>
+			                    <button data-role="none" name="cancel" id="cancelNick" onclick="app.editProf(this);return false;" class="formButton">ביטול</button>
+			                </div>
+			                <div class="edit"><div style="float: right;width: 70%" class="textar">[userAboutMe]</div><button data-role="none" onclick="app.editProf(this);return false;" name="edit" class="formButton">לשנות</button></div>
+			            </div>
+			            <div class="clear" data-role="none"></div>
+			            <div class="sf_txt" style="line-height: normal;margin-top:10px;"><span>מה אני מחפש</span></div>
+			            <div class="sf_sel_wrap">
+			                    <div class="save" style="display: none;" >
+			                    <div style="width: 70%;float: right;">
+			                        <textarea name="userLookingFor" id="userLookingFor" class="inpi" style="min-height:70px;">[userLookingFor]</textarea>
+			                    </div>
+			                    <div class="clear" data-role="none"></div>
+			                    <button data-role="none" name="submit" onclick="app.saveProf(this,'textarea');return false;" class="formButton">שמירה</button>
+			                    <button data-role="none" name="cancel" id="cancelNick" onclick="app.editProf(this);return false;" class="formButton">ביטול</button>
+			                </div>
+			                <div class="edit"><div style="float: right;width: 70%" class="textar">[userLookingFor]</div><button data-role="none" onclick="app.editProf(this);return false;" name="edit" class="formButton">לשנות</button></div>
+			            </div>
+			            <div class="clear" data-role="none"></div>
+			            <div class="sf_txt"><span>שם פרטי</span></div>
+			            <div class="sf_sel_wrap">
+			                <div class="save" style="display: none;" >
+			                    <div style="width: 70%;float: right;">
+			                        <input type="text" name="userfName" value="[userfName]" id="userfName" class="inpi" />
+			                    </div>
+			                    <div class="clear" data-role="none"></div>
+			                    <button data-role="none" name="submit" onclick="app.saveProf(this,'input');return false;" class="formButton">שמירה</button>
+			                    <button data-role="none" name="cancel" id="cancelNick" onclick="app.editProf(this);return false;" class="formButton">ביטול</button>
+			                </div>
+			                <div class="edit"><div style="float: right;width: 70%">[userfName]</div><button data-role="none" onclick="app.editProf(this);return false;" name="edit" class="formButton">לשנות</button></div>
+			            </div>
+			            <div class="sf_txt"><span>שם משפחה</span></div>
+			            <div class="sf_sel_wrap">
+			                    <div class="save" style="display: none;" >
+			                    <div style="width: 70%;float: right;">
+			                        <input type="text" name="userlName" value="[userlName]" id="userfName" class="inpi" />
+			                    </div>
+			                    <div class="clear" data-role="none"></div>
+			                    <button data-role="none" name="submit" onclick="app.saveProf(this,'input');return false;" class="formButton">שמירה</button>
+			                    <button data-role="none" name="cancel" id="cancelNick" onclick="app.editProf(this);return false;" class="formButton">ביטול</button>
+			                </div>
+			                <div class="edit"><div style="float: right;width: 70%">[userlName]</div><button data-role="none" onclick="app.editProf(this);return false;" name="edit" class="formButton">לשנות</button></div>
+			            </div>
+			            <div class="sf_txt"><span>השקפה</span></div>
+			            <div class="sf_sel_wrap" style="height:auto;min-height: 47px;">
+			                <div class="save" style="display: none;" >
+			                    <div style="width:70%;margin-bottom:2%;float: right;" class="religionList"></div>
+			                    <div class="clear" data-role="none"></div>
+			                    <button data-role="none" name="submit" onclick="app.saveProf(this,'select');return false;" class="formButton">שמירה</button>
+			                    <button data-role="none" name="cancel" id="cancelNick" onclick="app.editProf(this);return false;" class="formButton">ביטול</button>
+			                </div>
+			                <div class="edit"><div style="float: right;width: 70%"></div><button data-role="none" onclick="app.editProf(this);return false;" name="edit" class="formButton">לשנות</button></div>                
+			            </div>
+			            <div class="sf_txt"><span>ת. לידה</span></div>
+			            <div class="sf_sel_wrap" style="padding-top: 4px;height: 43px;">
+			                <div class="save" style="display: none;" >
+			                    <div id="userBirth" class="right"></div>
+			                    <div class="clear" data-role="none"></div>
+			                    <button data-role="none" name="submit" onclick="app.saveProf(this,'select');return false;" class="formButton">שמירה</button>
+			                    <button data-role="none" name="cancel" id="cancelNick" onclick="app.editProf(this);return false;" class="formButton">ביטול</button>
+			                </div>
+			                <div class="edit"><div style="float: right;width: 70%">[j] / [n] / [Y]</div><button data-role="none" onclick="app.editProf(this);return false;" name="edit" class="formButton">לשנות</button></div>                
+			            </div>
+			</div>
+			<!-- END Edit Profile Template -->
+			
+			
+			<!-- START User Profile Buttons Template -->
+			<div id="userProfileButtonsTemplate">
+				<button onclick="app.getChat([USER_ID],'[USERNICK]');" data-theme="a">שליחת הודעה</button>	  					
+				<div class="clear"></div>
+				<br />
+			</div>
+			<!-- END User Profile Buttons Template -->
+			
+			
+			<!-- START User Profile Group Template -->
+			<div id="userProfileGroupTemplate">
+				<div class="user_data_group bold">[GROUP_NAME]</div>
+			</div>
+			<!-- END User Profile Group Template -->
+			
+			
+			<!-- START User Profile Line Template -->
+			<div id="userProfileLineTemplate">
+				<div class="user_data_wrap">
+					<div class="user_data bold">[LINE_NAME]</div>
+					<div class="user_data">[LINE_VALUE]</div>
+					<div class="clear"></div>
+					<div class="underline"></div>
+				</div>
+			</div>
+			<!-- END User Profile Line Template -->
+			
+			<!-- START User Profile Line Template 2 -->
+			<div id="userProfileLineTemplate2">
+				<div class="user_data_wrap">					
+					<div class="user_data2">[LINE_VALUE]</div>
+					<div class="underline"></div>
+				</div>
+			</div>
+			<!-- END User Profile Line Template 2-->
+			
+			
+			<!-- START Messenger Template -->
+			<div id="messengerTemplate">
+				<div class="mail_section" onclick="app.getChat([USER_ID],'[USERNICK]');">					
+					<img src="[IMAGE]" />
+					<div class="txt">
+						<strong>[USERNICK]</strong><br />
+						[RECENT_MESSAGE]					
+					</div>										
+					<span>[DATE]</span>					
+					<div class="special2 hidden"></div>
+					<div class="new_mes_count"></div>					 
+				</div>
+			</div>
+			<!-- END Messenger Template -->
+			
+			<!-- START Chat Message Template -->
+			<div id="chatMessageTemplate">
+				<div class="[MESSAGE_TYPE] [MESSAGE_FLOAT]">
+					[MESSAGE]
+				<div class="buySubscr"><button onclick="app.getSubscription();" data-theme="a">רכישת מנוי</button></div></div>
+				[READ]
+				<div class="message_info [INFO]">נשלח ב: [DATE] בשעה: [TIME]</div>
+			</div>
+			<!-- END Chat Message Template -->
+			
+			<!-- START Images List Template -->
+			<div id="editImageTemplate">				
+				<div class="userImageWrap">
+					<img src="[IMAGE]" width="295" /><br />
+					<span class="imageStatus"></span>
+					<button onclick="app.confirmDeleteImage([IMAGE_ID]);" data-theme="a">למחוק</button>
+					<br /><br /><br />
+				</div>
+			</div>
+			<!-- END Images List Template -->
+			
+	</div>
+	
+	
+</body>
+</html>
