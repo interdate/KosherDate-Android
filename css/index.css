@@ -94,9 +94,15 @@ a{
     background-size: auto 64%;
     font-size: 11px;why_subscr
 }
+
+#main_page .content_wrap ul li{
+	text-shadow: none;
+}
+
 /*searchRS*/
 #searchRS{
-    background: url(../images/searchRS.png) no-repeat top center; 
+    background: url(../images/searchRS.png) no-repeat top center;
+
 }
 /*onlineFri*/
 #onlineFri{
@@ -185,7 +191,7 @@ a{
 }
 
 .regInput sp{
-	color:#c8c8c9;
+	color:#000;
 	line-height:50px;
 	text-shadow:none;
 }
@@ -213,9 +219,9 @@ a{
 	margin-top:8px;
 }
 
-#user_input input, #pass_input input, .regInput input{
+#user_input input, #pass_input input, .regInput input, .regInput textarea{
 	width:165px;
-	color:#c8c8c9;
+	color:#000;
 	font-size:16px;
 	font-weight: bold;
 	height:38px;
@@ -249,6 +255,11 @@ a{
 	border:0px;
 	background: #ececec;	
 }
+
+.regInput textarea {
+	height: 100px;
+}
+
 
 /*
 .regInput input{
@@ -318,6 +329,7 @@ a{
 	padding: 0;
 	line-height: 44px;
 	font-weight: normal;
+	text-shadow: none;
 }
 
 #grey_line{
@@ -350,7 +362,8 @@ a{
 
 .user_data_preview .user_photo{	
 	width:128px;	
-	background:#464646;				
+	background:#464646;
+
 }
 
 .user_data_preview a span{	
@@ -523,7 +536,7 @@ a{
 	position:relative;
 }*/
 
-#why_subscr{
+#why_subscr, #contactUs{
 	width:286px;
 	/*height:60px;
 	background:url("../images/why_subscr_button.png") no-repeat;*/
@@ -531,7 +544,7 @@ a{
 	margin:10px 4% 0 0;
 }
 
-#why_subscr button{
+#why_subscr button, #contactUs button{
 	width:300px;
 	height:65px;
 	background:url("../images/main_button.png") no-repeat center center;
@@ -735,8 +748,8 @@ h1 span{
 .user_pic{
 	width:100%;
 	height:100%;
-	background:#575757;	
-	background-size:100%;	
+	background:#575757;
+	background-size:100%;
 }
 
 .send_mes{
@@ -1662,7 +1675,10 @@ a .mail_section{
 #sortByEntranceTime,
 #edit_profile_page,
 #recovery_page,
-.cityInp{
+#contact_us_page,
+#report_abuse_page,
+.cityInp
+{
 	display:none;   
 }
 
@@ -1932,5 +1948,12 @@ float: left;
 	.pad_top_25{padding-top:40px;}
 	.but_c{font-size:25px;line-height:46px}
 	.bg_button{height:50px;}
-}	
+}
+
+
+.loadingBar{
+	width:100%;
+	height:20px;
+	background: url('../images/loader.gif') no-repeat center center;
+}
 
