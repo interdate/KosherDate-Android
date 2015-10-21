@@ -2607,7 +2607,7 @@ var app = {
            	success: function(response){
 				//alert(JSON.stringify(response));
     			if(response.userHasNoMainImage){
-               		app.alert("כדי להיכנס לזירה של קשרדייט עליך לעדכן תמונה.");
+               		app.alert("כדי להיכנס לזירה של קשרים עליך לעדכן תמונה.");
                   	app.displayUserImages();
                 }
 
