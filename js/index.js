@@ -11,7 +11,8 @@ var pushNotification;
 
 checkNewMessagesRequest = '';
 newMessages = '';
-
+refreshChat = '';
+checkBingo = '';
 
 
 
@@ -51,7 +52,14 @@ var app = {
 	logged: false,
 	exit: false,
 	countMes: 0,
-	
+	newNotificationsCount: 0,
+    contactCurrentAllMessagesNumber : 0,
+    contactCurrentReadMessagesNumber : 0,
+
+	swiper: null,
+    bingoIsActive: false,
+    bingos: [],
+
 		
 	init: function(){
 		//navigator.splashscreen.hide();		
@@ -156,9 +164,11 @@ var app = {
 
 		if(app.logged === false){
 			var userInput = window.localStorage.getItem("userInput");
-			$('#user_input').find('input').val(userInput);
+			if(userInput != 'null')
+				$('#user_input').find('input').val(userInput);
 			$('.appPage').hide();
 			$('.new_mes').hide();
+			$('#likesNotifications').hide();
 			$("#login_page").show();
 			$('#back').hide();
 			$('#logout').hide();
@@ -174,6 +184,7 @@ var app = {
 			$('#back').hide();
 			$('#logout').show();
 			$('#sign_up').hide();
+			$('#likesNotifications').css({left:'auto',right:'0px'}).show();
 			//$('#contact').show();
 			app.currentPageId = 'main_page';
 			app.currentPageWrapper = $('#'+app.currentPageId);
@@ -185,6 +196,7 @@ var app = {
 		app.searchFuncsMainCall = true;
 		app.setBannerDestination();
 		app.checkNewMessages();
+		app.checkBingo();
 		//app.pushNotificationInit();
 		app.sendUserPosition();
 	},
@@ -257,9 +269,9 @@ var app = {
 
 
 	sendAuthData: function(){
-		var user = $("#authForm .email").val();
+		var userInput = $("#authForm .email").val();
 		var pass = $("#authForm .password").val();
-		user = unescape(encodeURIComponent(user));
+		user = unescape(encodeURIComponent(userInput));
 		pass = unescape(encodeURIComponent(pass));
 		app.exit = false;
 		window.localStorage.setItem("user",user);
@@ -278,7 +290,7 @@ var app = {
 					app.showPage('main_page');
 					$('#logout').show();
 					window.localStorage.setItem("userId", data.userId);
-					window.localStorage.setItem("userInput", user);
+					window.localStorage.setItem("userInput", userInput);
 					app.loggedUserInit();
 					//document.removeEventListener("backbutton", app.back, false);
 				}
@@ -507,19 +519,28 @@ var app = {
 			$('#back').hide();
 			$('#sign_up').hide();
 			//$('#contact').show();
+			$('#likesNotifications').css({left:'auto',right:'0px'}).show();
+           	$('#logout').show();
 		}
 		else if(app.currentPageId == 'login_page'){
 			$('#back').hide();
 			$('#sign_up').show();
 			$('#contact').hide();
+			$('#logout').hide();
+            $('#likesNotifications').hide();
 		}
 		else{
 			$('#back').show();
 			$('#sign_up').hide();
 			$('#contact').hide();
+			$('#logout').hide();
 			document.addEventListener("backbutton", app.back, false);
+			$('#likesNotifications').removeAttr('style').show();
 		}
 
+		if(app.currentPageId == 'register_page' || app.currentPageId == 'recovery_page'){
+          	$('#likesNotifications').hide();
+        }
 		$(window).unbind("scroll");
 
 	},
@@ -671,6 +692,7 @@ var app = {
 				}
 				if(user.distance != ""){
 					currentUserNode.find(".distance_value").show().find("span").html(user.distance);
+					app.positionSaved = true;
 				}
 				if(user.id==window.localStorage.getItem("userId")){currentUserNode.find('.send_mes').hide();}
 			}
@@ -1262,11 +1284,14 @@ var app = {
 					app.response = response;
 					console.log( JSON.stringify(app.response));
 					if(app.response.result > 0){
-						var user = app.container.find("#userEmail").val();
+						var userInput = app.container.find("#userEmail").val();
 						var pass = app.container.find("#userPass").val();
+						user = unescape(encodeURIComponent(userInput));
+                        pass = unescape(encodeURIComponent(pass));
 						window.localStorage.setItem("user",user);
 						window.localStorage.setItem("pass",pass);
 						window.localStorage.setItem("userId", app.response.result);
+						window.localStorage.setItem("userInput", userInput);
 						app.ajaxSetup();
 						app.getRegStep();
 					}
@@ -2114,40 +2139,62 @@ var app = {
 	},
 
 	checkNewMessages: function(){
-		checkNewMessagesRequest = $.ajax({
-			url: app.apiUrl+'/api/v3/user/newMessagesCount',
-			type: 'Get',
-			complete: function(response, status, jqXHR){
-				//app.stopLoading();
-			},
-			success: function(response){
-				app.response = response;
-				//alert(app.response.newMessagesCount);
-				if(app.response.newMessagesCount > 0){
-					var count = app.response.newMessagesCount;
+		var user = window.localStorage.getItem("user");
+      	var pass = window.localStorage.getItem("pass");
 
-					//var width = $(document).width();
-					//var pos = width/2 - 30;
-					$('.new_mes_count2').html(count);
-					$('#main_page').addClass('pad_top_25');//css({'padding-top':'25px'});
-					$('.new_mes').show();
-					if(app.currentPageId == 'messenger_page'&&app.countMes != count){
-						//$('.new_mes_count').html(count).show();
-						app.getMessenger();
-					}
-				}
-				else{
-					$('.new_mes').hide();
-					$('#main_page').css({'padding-top':'0px'});
-					if(app.currentPageId == 'messenger_page'){
-						$('.new_mes_count').hide();
-					}
-				}
-				app.countMes = count;
-				newMesssages = setTimeout(app.checkNewMessages, 10000);
-			}
-		});
+      	if(user != '' && pass != '' && app.currentPageId != 'login_page' && app.currentPageId != 'register_page' && app.currentPageId != 'recovery_page'){
 
+			checkNewMessagesRequest = $.ajax({
+				url: app.apiUrl+'/api/v3/user/newMessagesCount',
+				type: 'Get',
+				complete: function(response, status, jqXHR){
+					//app.stopLoading();
+				},
+				success: function(response){
+					//app.response = response;
+					//alert(app.response.newMessagesCount);
+					if(response.newMessagesCount > 0){
+						var count = response.newMessagesCount;
+
+						//var width = $(document).width();
+						//var pos = width/2 - 30;
+						$('.new_mes_count2').html(count);
+						$('#main_page').addClass('pad_top_25');//css({'padding-top':'25px'});
+						//$('.new_mes').show();
+						if(app.logged === true && app.currentPageId != 'login_page' && app.currentPageId != 'register_page' && app.currentPageId != 'recovery_page')
+							$('.new_mes').show();
+						else
+							$('.new_mes').hide();
+						if(app.currentPageId == 'messenger_page'&&app.countMes != count){
+							//$('.new_mes_count').html(count).show();
+							app.getMessenger();
+						}
+					}
+					else{
+						$('.new_mes').hide();
+						$('#main_page').removeClass('pad_top_25');//.css({'padding-top':'0px'});
+						if(app.currentPageId == 'messenger_page'){
+							$('.new_mes_count').hide();
+						}
+					}
+					app.countMes = count;
+
+					if(response.newNotificationsCount > 0){
+						app.newNotificationsCount = response.newNotificationsCount;
+						if(app.currentPageId != 'login_page' && app.currentPageId != 'register_page' && app.currentPageId != 'recovery_page'){
+							$('#likesCount').html(app.newNotificationsCount).show();
+						}
+					}
+					else{
+						app.newNotificationsCount = 0;
+						$('#likesCount').hide();
+						//$('#likesCount').html(app.newNotificationsCount).show();
+					}
+
+					newMesssages = setTimeout(app.checkNewMessages, 10000);
+				}
+			});
+		}
 	},
 
 	getSubscription: function(){
@@ -2532,7 +2579,324 @@ var app = {
 		html = html + '</div>';
 		return html;
 	},
-	
+
+
+	getUsersForLikes: function(supposedToBeLikedUserId, notifId){
+
+    	app.startLoading();
+
+    	if(!supposedToBeLikedUserId){
+    		supposedToBeLikedUserId = 0;
+    	}
+
+    	if(!notifId){
+           	notifId = 0;
+        }
+
+        var url = app.apiUrl + '/api/v3/users/forLikes/' + supposedToBeLikedUserId + '/' + notifId;
+        //alert(url);
+        //return;
+
+    	$.ajax({
+           	url: url,
+           	type: 'Get',
+           	timeout: 10000,
+           	error: function(error){
+           		//alert("ERROR:" + JSON.stringify(error));
+           	},
+           	success: function(response){
+				//alert(JSON.stringify(response));
+    			if(response.userHasNoMainImage){
+               		app.alert("כדי להיכנס לזירה של קשרדייט עליך לעדכן תמונה.");
+                  	app.displayUserImages();
+                }
+
+           		//alert("RESP:" + JSON.stringify(response));
+                if(response.users.itemsNumber > 0){
+    				app.showPage('do_likes_page');
+                   	//console.log("NUMBER: " + response.users.itemsNumber);
+                   	//console.log("ITEMS: " + JSON.stringify(response));
+
+
+    				var wrapper = $('.swiper-wrapper');
+    				var userId = window.localStorage.getItem("userId");
+    				var html = '';
+    				//wrapper.html(html);
+    				//alert(response.users.items.length);
+    				for(var i in response.users.items){
+
+    					if (i < 250){
+
+    						var user = response.users.items[i];
+    						//console.log("USER: " + JSON.stringify(user));
+    						//html = html + '<div class="swiper-slide">'+i+'</div>';
+    						html = html + '<div class="swiper-slide"><div id="' + user.id + '" class="cont" style="background-image: url('
+   								+ response.users.imagesStoragePath
+   								+ '/'
+   								+ user.imageId
+   								+ '.'
+   								+ response.users.imagesExtension
+    							+ ')"><div class="nickname" onclick="app.getUserProfile(' + user.id + ')">' + user.nickName + ', '+ user.age +'</div></div></div>';
+
+   							//if (i < 3){
+   								//wrapper.append(html);
+   								//html = '';
+   							//}
+    						//wrapper.append(html);
+   						}
+   						if (i == 250) break;
+   					}
+                    wrapper.html(html);
+                    //wrapper.append(html);
+                    //console.log("SWIPER HTML: " + wrapper.html());
+    				app.initSwiper();
+    				app.showPage('do_likes_page');
+                }
+            }
+        });
+    },
+
+
+    initSwiper: function(){
+
+    	if(app.swiper != null){
+    		app.swiper.destroy();
+    	}
+
+    	app.swiper = new Swiper ('.swiper-container', {
+           	// Optional parameters
+            direction: 'horizontal',
+            //initialSlide:10,
+            //spaceBetween: 50,
+            loop: true,
+            speed: 100,
+            nextButton: '.unlike.icon'
+
+            // If we need pagination
+            //pagination: '.swiper-pagination',
+
+            // Navigation arrows
+            //nextButton: '.swiper-button-next',
+            //prevButton: '.swiper-button-prev',
+
+            // And if we need scrollbar
+            //scrollbar: '.swiper-scrollbar',
+        });
+    },
+
+
+    doLike: function(){
+
+    	var userId = $('.swiper-slide-active .cont').attr("id");
+
+    	$.ajax({
+           	url: app.apiUrl + '/api/v3/user/like/' + userId,
+           	type: 'Post',
+           	error: function(error){
+           		console.log("ERROR: " + JSON.stringify(error));
+           	},
+           	success: function(response){
+           		//console.log("SUCCESS: " + JSON.stringify(response));
+           		app.swiper.slideNext();
+           		$('#' + userId).parents('.swiper-slide').remove();
+           		app.checkBingo();
+           	}
+        });
+    },
+
+
+    test: function(){
+
+    },
+
+
+    getChatWith: function(){
+    	var chatWith = $('.swiper-slide-active .cont').attr("id");
+    	var userNick = $('.swiper-slide-active .cont .nickname').text();
+    	console.log($('.swiper-container').html());
+    	app.getChat(chatWith, userNick);
+    },
+
+
+    getLikesNotifications: function(){
+
+    	app.startLoading();
+   		$.ajax({
+           	url: app.apiUrl + '/api/v3/user/likes/notifications',
+           	type: 'Get',
+           	error: function(error){
+           		console.log("ERROR: " + JSON.stringify(error));
+           	},
+           	success: function(response){
+           		//console.log("SUCCESS: " + JSON.stringify(response));
+           		app.showPage('likes_notifications_page');
+
+           		if(response.likesNotifications.itemsNumber > 0){
+           		    var template = $('#likeNotificationTemplate').html();
+           		  	var html = '';
+
+           		    for(var i in response.likesNotifications.items){
+           		    	var currentTemplate = template;
+   						var notification = response.likesNotifications.items[i];
+
+   						notification.nickName = notification.nickName.replace(/'/g, "׳");
+
+   						imageUrl = response.likesNotifications.imagesStoragePath
+   							+ '/'
+                            + notification.imageId
+                            + '.'
+                            + response.likesNotifications.imagesExtension
+                        ;
+
+                        var isReadClass = (notification.isRead == 1) ? 'isRead' : '';
+                        var bingoClass = (notification.bingo == 1) ? 'bingo' : '';
+                        var func = (notification.bingo == 1)
+                          	? "app.setUserNotificationAsRead(" + notification.id + ", this);app.getChat('" +  notification.userId  + "','" + notification.nickName + "');"
+                           	: "app.getUsersForLikes('" + notification.userId  + "','" + notification.id  + "')"
+                        ;
+
+   						currentTemplate = currentTemplate.replace("[IMAGE]", imageUrl);
+                       	currentTemplate = currentTemplate.replace(/\[USERNICK\]/g,notification.nickName);
+                       	currentTemplate = currentTemplate.replace("[FUNCTION]", func);
+                       	currentTemplate = currentTemplate.replace("[TEXT]",notification.template.replace("[USERNICK]", notification.nickName));
+                       	currentTemplate = currentTemplate.replace("[DATE]", notification.date);
+                       	currentTemplate = currentTemplate.replace("[USER_ID]", notification.userId);
+                       	currentTemplate = currentTemplate.replace("[IS_READ_CLASS]", isReadClass);
+                       	currentTemplate = currentTemplate.replace("[BINGO_CLASS]", bingoClass);
+
+   						html = html + currentTemplate;
+   					}
+
+   					console.log("HTML: " + html);
+
+   					app.currentPageWrapper.find('.notifications_wrap').html(html);
+   				}
+           	}
+        });
+   	},
+
+
+   	checkBingo: function(){
+
+   		if(app.currentPageId != 'login_page' && app.currentPageId != 'register_page' && app.currentPageId != 'recovery_page'){
+
+   			if(checkBingo != ''){
+   				checkBingo.abort();
+   			}
+
+   			checkBingo = $.ajax({
+   				url: app.apiUrl + '/api/v3/user/bingo',
+   				type: 'Get',
+   				error: function(error){
+   					console.log("ERROR: " + JSON.stringify(error));
+   				},
+   				success: function(response){
+   					if(app.currentPageId != 'login_page' && app.currentPageId != 'register_page' && app.currentPageId != 'recovery_page'){
+   						console.log("SUCCESS: " + JSON.stringify(response));
+   						if(response.bingo.itemsNumber > 0){
+   							for(var i = 0; i < response.bingo.itemsNumber; i++){
+   								var bingo = response.bingo.items[i];
+
+   								if(!app.inBingosArray(bingo)){
+   									app.bingos.push(bingo);
+   								}
+   							}
+
+   							if(!app.bingoIsActive && app.currentPageId != 'chat_page'){
+   								app.splashBingo(response);
+   							}
+
+   						}
+
+   						setTimeout(app.checkBingo, 10000);
+   					}
+   				}
+   			});
+        }
+    },
+
+
+    splashBingo: function(response){
+    	//alert(app.bingos.length);
+    	for(var i in app.bingos){
+    		if(typeof(app.bingos[i]) !== "undefined" ){
+    			//alert("Bingo " + i + ": " + JSON.stringify(app.bingos[i]));
+    			var bingo = app.bingos[i];
+    			var template = $('#bingoTemplate').html();
+
+    			userImageUrlTemplate = response.bingo.imagesStoragePath
+                   	+ '/'
+                    + '[IMAGE_ID]'
+                    + '.'
+                    + response.bingo.imagesExtension
+                ;
+
+                var userImageUrl_1 = userImageUrlTemplate.replace('[IMAGE_ID]', bingo.userImageId_1);
+                var userImageUrl_2 = userImageUrlTemplate.replace('[IMAGE_ID]', bingo.userImageId_2);
+
+    			template = template.replace("[USER_IMAGE_URL_1]", userImageUrl_1);
+    			template = template.replace("[USER_IMAGE_URL_2]", userImageUrl_2);
+    			template = template.replace("[USER_ID]", bingo.userId);
+    			template = template.replace(/\[USERNICK\]/g, bingo.nickName);
+
+    			$('#bingo_page').css({"background":"url('" + userImageUrl_2 + "') no-repeat center center", "background-size":"cover"}).html(template);
+    			app.showPage('bingo_page');
+
+    			app.bingoIsActive = true;
+    			app.setBingoAsSplashed(bingo, i);
+    			break;
+    		}
+        }
+    },
+
+
+    setBingoAsSplashed: function(bingo, i){
+
+    	var data = JSON.stringify(bingo);
+
+    	$.ajax({
+           	url: app.apiUrl + '/api/v3/user/bingo/splashed',
+           	type: 'Post',
+           	data: data,
+           	error: function(error){
+           		console.log("ERROR: " + JSON.stringify(error));
+           	},
+           	success: function(response){
+           		console.log(JSON.stringify(response));
+           		if(response.success){
+           			app.bingos.splice(i, 1);
+           		}
+           	}
+        });
+    },
+
+
+    inBingosArray: function(bingo){
+    	for(var i in app.bingos){
+    		if(app.bingos[i].id === bingo.id){
+    			return true;
+    		}
+    	}
+
+    	return false;
+    },
+
+
+    setUserNotificationAsRead: function(notifId, clickedObj){
+
+    	$.ajax({
+           	url: app.apiUrl + '/api/v3/user/notification/' + notifId + '/read',
+           	type: 'Post',
+           	error: function(error){
+           		console.log("ERROR: " + JSON.stringify(error));
+           	},
+           	success: function(response){
+           		console.log(JSON.stringify(response));
+           		$(clickedObj).addClass("isRead");
+           	}
+        });
+    },
+
 		
 	dump: function(obj) {
 	    var out = '';

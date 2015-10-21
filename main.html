@@ -36,6 +36,9 @@
     - preloader.gif (for browsers that do not support CSS animations) -->
 	<link rel="stylesheet" href="js/photoswipe/default-skin/default-skin.css">
 
+    <link rel="stylesheet" href="js/swiper/css/swiper.min.css">
+    <script src="js/swiper/js/swiper.jquery.min.js"></script>
+
 </head>
  
 <body>
@@ -45,6 +48,7 @@
 			
 		<div id="header">
 			<div id="logo" onclick="app.chooseMainPage();"></div>
+            <div id="likesNotifications" onclick="app.getLikesNotifications();"><div id="likesCount" class="hidden"></div></div>
 			<div class="new_mes" onclick="app.pageNumber = 1;app.getMessenger();"><div class="text_mes">תיבת הודעות</div><div class="new_mes_count2"></div></div>
 			<div id="top_right_buttons">
 				<div id="contact" onclick="app.contact();"></div>
@@ -56,9 +60,53 @@
 			</div>
 		</div>			
 		<!--Stop Header-->
-		
 
-		<!--Start Login Page -->
+
+        <!--Start Search Results Page -->
+        <div id="do_likes_page"  class="appPage">
+
+            <!-- Slider main container -->
+            <div class="swiper-container">
+                <!-- Additional required wrapper -->
+                <div class="swiper-wrapper">
+                    <!-- Slides -->
+                    <div class="swiper-slide"></div>
+                    <div class="swiper-slide"></div>
+                    <div class="swiper-slide"></div>
+                </div>
+
+                <!--
+                <div class="swiper-pagination"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-scrollbar"></div>
+                -->
+
+
+            </div>
+
+            <div class="toolbar">
+
+                <div class="box"><div class="unlike icon" onclick="app.test();"></div></div>
+                <div class="box"><div class="chat icon" onclick="app.getChatWith();"></div></div>
+                <div class="box"><div class="like icon" onclick="app.doLike();"></div></div>
+
+            </div>
+
+
+        </div>
+        <!--End Search Results Page -->
+
+
+        <div id="bingo_page" class="appPage">
+
+        </div>
+
+
+        <div style="width:100%; height:70px;"></div>
+
+
+        <!--Start Login Page -->
 		<div id="login_page" class="appPage">
 			<div data-role="content" class="bg_white">
 				<div class="content_wrap"> 			
@@ -118,14 +166,16 @@
 		                <li onclick="app.getOnlineNow();"><a href="" title="title" id="onlineFri">חברים אונליין</a></li>
 		                <li onclick="app.pageNumber= 1; app.getMessenger();"><a href="" title="title" id="massBox">תיבת הודעות</a></li>
 		                <li onclick="app.getStatUsers('lookedMe');"><a href="" title="title" id="watchMe">צפו בי</a></li>
-		                <li onclick="app.getStatUsers('looked');"><a href="" title="title" id="Iwatch">צפיתי בהם</a></li>
+		                <li onclick="app.getUsersForLikes();"><a href="" title="title" id="like_but">הזירה</a><div class="new"></div></li>
 		                <li onclick="app.getStatUsers('contactedMe');"><a href="" title="title" id="contactedThem">פניתי אליהם</a></li>
-		                <li onclick="app.getStatUsers('friends');"><a href="" title="title" id="myFavorite">המועדפים שלי</a></li>
-		                <li onclick="app.getMyProfileData();"><a href="" title="title" id="myPro">פרופיל אישי</a></li>
+                        <li onclick="app.getStatUsers('friends');"><a href="" title="title" id="myFavorite">המועדפים שלי</a></li>
+                        <li onclick="app.getStatUsers('looked');"><a href="" title="title" id="Iwatch">צפיתי בהם</a></li>
 		                <li onclick="app.getEditProfile();"><a href="" title="title" id="editPro">עדכון פרופיל</a></li>
 		            </ul>
 					<div class="clear"></div>	
-					<!-- <button onclick="app.getRegStep();"></button> -->			
+					<!-- <button onclick="app.getRegStep();"></button> -->
+                    <!-- <li onclick="app.getMyProfileData();"><a href="" title="title" id="myPro">פרופיל אישי</a></li> -->
+                    <div id="contactUs" onclick="app.getMyProfileData();"><button data-role="none">פרופיל אישי</button></div>
 					<a href="#" id="bannerLink"><div id="why_subscr"><button data-role="none">לרכישת מנוי להץ כאן</button></div></a>
 					<div id="contactUs" onclick="app.showPage('contact_us_page');"><button data-role="none">צרו קשר</button></div>
 				</div>					
@@ -337,8 +387,28 @@
 				</div>					
 			</div>		
 		</div>
-		<!--End Profile Page -->					
-					
+		<!--End Profile Page -->
+
+
+        <!--Start User Likes Page -->
+        <div id="likes_notifications_page" class="appPage">
+            <div data-role="content">
+                <div class="content_wrap">
+                    <h1>התראות מהזירה</h1>
+                    <div class="dots"></div>
+                    <div class="notText">
+                        זה המקום בו תוכלו לקבל התראות בכל פעם שמישהו בזירה פירגן לתמונה שלכם.
+                        <br>
+                        הודעת בינגו! תופיע במידה ושניכם פירגנתם אחד לשני.
+                    </div>
+                    <div class="notifications_wrap">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--End User Likes Page -->
+
 			
 		<!--Start Messenger Page -->
 		<div id="messenger_page"  class="appPage"> 
@@ -989,7 +1059,21 @@
 				</div>
 			</div>
 			<!-- END Messenger Template -->
-			
+
+            <!-- START Like Notification Template -->
+            <div id="likeNotificationTemplate">
+                <div class="mail_section [IS_READ_CLASS]" onclick="[FUNCTION]">
+                    <div class="txt">
+                        <strong>[USERNICK]</strong><br />
+                        [TEXT]
+                    </div>
+                    <img src="[IMAGE]" />
+                    <span>[DATE]</span>
+                    <div class="[BINGO_CLASS]"></div>
+                </div>
+            </div>
+            <!-- END Like Notification Template -->
+
 			<!-- START Chat Message Template -->
 			<div id="chatMessageTemplate">
 				<div class="[MESSAGE_TYPE] [MESSAGE_FLOAT]">
@@ -1028,6 +1112,36 @@
 			</div>
 			<!-- END Loading Bar Template -->
 
+            <!-- START Bingo Template -->
+            <div id="bingoTemplate">
+
+                <div class="bingoWrapper">
+
+                    <div class="close" onclick="app.back(); app.bingoIsActive=false;"></div>
+                    <div class="logo"></div>
+
+                    <div class="imagesWrapper">
+                        <div class="imageCont" style="background-image: url('[USER_IMAGE_URL_1]');"></div>
+                        <div class="plus"></div>
+                        <div class="imageCont" style="background-image: url('[USER_IMAGE_URL_2]');"></div>
+                    </div>
+
+                    <div class="clear"></div>
+
+
+                    <div class="txt">
+                        גם
+                        [USERNICK]
+                        בעניין שלך!
+                    </div>
+
+                    <div class="chat" onclick="app.getChat('[USER_ID]', '[USERNICK]');"><span>דברו איתם</span></div>
+                    <div class="ignore" onclick="app.back(); app.bingoIsActive=false;"><span>המשיכו לדפדף</span></div>
+
+                </div>
+
+            </div>
+            <!-- END Bingo Template -->
 
 	</div>
 
