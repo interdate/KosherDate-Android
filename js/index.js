@@ -1,9 +1,9 @@
-window.onerror = function(message, url, lineNumber) {
+/*window.onerror = function(message, url, lineNumber) {
 	//console.log("Error: "+message+" in "+url+" at line "+lineNumber);
 	alert("Error: "+message+" in "+url+" at line "+lineNumber);
 
 }
-
+*/
 
 pagesTracker = [];
 pagesTracker.push('main_page');
@@ -33,7 +33,7 @@ var app = {
 	response : '',
 	responseItemsNumber : '',
 	pageNumber : '',
-	itemsPerPage : 30,
+	itemsPerPage : 16,
 	container : '', 
 	template : '',
 	statAction : '',
@@ -68,7 +68,8 @@ var app = {
 		app.pictureSource = navigator.camera.PictureSourceType;
 		app.destinationType = navigator.camera.DestinationType;
 		app.encodingType = navigator.camera.EncodingType;
-		$('#login_page').css({'height':(($('#header').width()*1.6)-$('#header').height())+'px'});		
+		$('#mainContainer').css({'min-height': $(window).height()});
+		$('#login_page').css({'height':(($('#header').width()*1.6)-$('#header').height())+'px'});
 	},
 
 	ajaxSetup: function(){
@@ -481,7 +482,7 @@ var app = {
 		if(app.currentPageId == 'users_list_page'){
 			app.template = $('#userDataTemplate').html();
 			window.scrollTo(0, app.recentScrollPos);
-			app.setScrollEventHandler(2500,3500);
+			app.setScrollEventHandler(1000,2000);
 		}
 		else if(app.currentPageId == 'messenger_page'){
            	app.template = $('#messengerTemplate').html();
@@ -575,6 +576,7 @@ var app = {
 	},
 
 	getOnlineNow: function(){
+		app.startLoading();
 		app.showPage('users_list_page');
 		app.currentPageWrapper.find('.content_wrap').html('');
 		app.template = $('#userDataTemplate').html();
@@ -582,7 +584,7 @@ var app = {
 		app.container.append('<h1>תוצאות</h1><div class="dots"></div>');
 		app.action = 'getOnlineNow';
 		app.pageNumber = 1;
-		app.itemsPerPage = 30;
+		//app.itemsPerPage = 20;
 		app.getUsers();
 	},
 
@@ -611,6 +613,7 @@ var app = {
 			//alert(app.requestUrl);
 		}
 		else if(app.action == 'getStatResults'){
+
 			app.requestUrl = app.apiUrl+'/api/v3/user/statistics/'+app.statAction+'/count:'+app.itemsPerPage+'/page:'+app.pageNumber+'/sort:'+app.sort;
 		}
 
@@ -619,7 +622,7 @@ var app = {
 			timeout:10000,
 			success: function(response, status){
 				app.response = response;
-				//alert(JSON.stringify(app.response));
+				//alert(JSON.stringify(response.users.count));
 				if(app.response.users.itemsNumber=='0'&&app.pageNumber==1){
 					app.container.append('<h1 style="width:100%;text-align:center;margin-top:20px;">חיפוש הסתיים ללא תוצאות</h1>');
 				}else
@@ -771,6 +774,7 @@ var app = {
 		$.ajax({
 			url: app.apiUrl+'/api/v3/user/profile/'+userId,
 			success: function(user, status, xhr){
+			    //app.alert(JSON.stringify(user.statistics));
 				app.showPage('my_profile_page');
 				app.container = app.currentPageWrapper.find('.myProfileWrap');
 				app.container.find('.txt strong').html(user.nickName+', <span>'+user.age+'</span>');
@@ -800,6 +804,7 @@ var app = {
 	},
 
 	getStatUsers: function(statAction){
+		app.startLoading();
 		app.showPage('users_list_page');
 		app.currentPageWrapper.find('.content_wrap').html('');
 		app.template = $('#userDataTemplate').html();
@@ -981,27 +986,36 @@ var app = {
 			   app.stopLoading();
 			   //alert(JSON.stringify(res));return false;
 			   if(res.err == '1'){
-				//check(input.attr('id'),val);
-				alert(res.text);
-				$(el).parent().find('.input').css({'background':'red'});
+				    //check(input.attr('id'),val);
+				    input.val(res.val);
+				    $('#edit_profile_page').trigger('refresh');
+				    alert(res.text);
+				    //$(el).parent().find('.input').css({'background':'red'});
 			   }else if(res.res == '1'){
-				//alert(val);
-				alert('עדכון נשמר');
-				if(tag=='select'&&name!='userBirthday'&&name!='userGender'){
-					val = $(el).parent().find('.ui-select span').eq(1).text();
-					//alert(val);
-				}
-				if(val=='0'&&name=='userGender')val = 'אישה';
-				if(val=='1'&&name=='userGender')val = 'גבר';
-				if(name=='userBirthday') val=valInput.replace(/-/g,' / ');
-				if(name=='userPass')
-					$(el).parent().next().find('input').val(val);
-				else
-					$(el).parent().next().find('div').text(val);
-				$('.save').hide();
-				$('.edit').show();
+				    //alert(val);
+				    alert('עדכון נשמר');
+				    if(tag=='select'&&name!='userBirthday'&&name!='userGender'){
+					    val = $(el).parent().find('.ui-select span').eq(1).text();
+					    //alert(val);
+				    }
+				    if(val=='0'&&name=='userGender')val = 'אישה';
+				    if(val=='1'&&name=='userGender')val = 'גבר';
+				    if(name=='userBirthday') val=valInput.replace(/-/g,' / ');
+				    if(name=='userPass')
+					    $(el).parent().next().find('input').val(val);
+				    else{
+				        input.val(res.val);
+                        if(tag == 'select'){
+                            $(el).parent().next().find('div').text(input.find('option[value="' + res.val + '"]').text());
+                        }else{
+                            $(el).parent().next().find('div').text(res.val);
+                        }
+				    }
+                    $('.save').hide();
+                    $('.edit').show();
 			   }
 		   },
+
 		   error: function(err){
 			   app.stopLoading();
 			   //alert(JSON.stringify(err));
@@ -1302,8 +1316,11 @@ var app = {
 						if(app.response.err=='{=/membersdata/errors/existinngemail}')
 							app.response.err='אימייל שבחרתם קיים במערכת. אנא בחרו שם חדש';
 						*/
-
+                        for(var key in app.response.user){
+                        	$('#regForm #' + key).val(app.response.user[key]);
+                        }
 						app.alert($('<div>'+app.response.err+'</div>').text());
+						$('#regForm').trigger('refresh');
 
 					}
 				}
@@ -1641,6 +1658,7 @@ var app = {
 
 
 	search: function(pageNumber){
+		app.startLoading();
 		app.showPage('users_list_page');
 		app.template = $('#userDataTemplate').html();
 		app.container = app.currentPageWrapper.find('.content_wrap');
@@ -1789,7 +1807,8 @@ var app = {
 				   var profileButtonsTemplate = $('#userProfileButtonsTemplate').html();
 				   var profileButtonsTemplate_2 = $('#userProfileButtonsTemplate_2').html();
 				   profileButtonsTemplate = profileButtonsTemplate.replace(/\[USERNICK\]/g,user.nickName);
-				   profileButtonsTemplate = profileButtonsTemplate.replace("[USER_ID]", user.userId);
+                   profileButtonsTemplate = profileButtonsTemplate.replace(/\[USER_ID\]/g, user.userId);
+                   profileButtonsTemplate_2 = profileButtonsTemplate_2.replace(/\[USER_ID\]/g, user.userId);
 			   }
 			   else{
 				   var profileButtonsTemplate = '';
@@ -1802,6 +1821,7 @@ var app = {
 				if(!((user.eyesColor== undefined || user.eyesColor=='') && (user.bodyType== undefined || user.bodyType=='') && (user.hairColor== undefined || user.hairColor=='') && (user.hairLength== undefined || user.hairLength=='') && (user.breast== undefined || user.breast=='')))
 					html = html + app.getProfileGroup("מראה חיצוני");
 				if(user.eyesColor!== undefined && user.eyesColor!=='')html = html + app.getProfileLine("צבע עיניים", user.eyesColor);
+				if(user.userHeight!== undefined && user.userHeight!=='')html = html + app.getProfileLine("גובה", user.userHeight);
 				if(user.bodyType!== undefined && user.bodyType!=='')html = html + app.getProfileLine("מבנה גוף", user.bodyType);
 				if(user.hairColor!== undefined && user.hairColor!=='')html = html + app.getProfileLine("צבע שיער", user.hairColor);
 				if(user.hairLength!== undefined && user.hairLength!=='')html = html + app.getProfileLine("תסרוקת", user.hairLength);
@@ -1809,15 +1829,19 @@ var app = {
 				html = html + app.getProfileGroup("מידע בסיסי");
 				//html = html + app.getProfileLine("Nickname", user.nickName);
 				if(user.age!== undefined && user.age!=='')html = html + app.getProfileLine("גיל", user.age);
+				if(user.zodiak !== undefined && user.zodiak !== '') html = html + app.getProfileLine("מזל", user.zodiak);
 				//html = html + app.getProfileLine("נטיה מינית", user.sexPreference);
 				//html = html + app.getProfileLine("נסיון עם נשים", user.experience);
 				//if(user.country!== undefined && user.country!=='')html = html + app.getProfileLine("País de Nacimiento", user.country);
 				if(user.region!== undefined && user.region!=='' && user.region!==null)html = html + app.getProfileLine("אזור מגורים", user.region);
 				if(user.city!== undefined && user.city!=='' && user.city!==null)html = html + app.getProfileLine("עיר מגורים", user.city);
 				if(user.smoking!== undefined && user.smoking!=='')html = html + app.getProfileLine("עישון", user.smoking);
+				if(user.maritalStatus !== undefined && user.maritalStatus !== '') html = html + app.getProfileLine("מצב משפחתי", user.maritalStatus);
+                if(user.children !== undefined && user.children !== '') html = html + app.getProfileLine("מספר ילדים", user.children);
 				if(user.education!== undefined && user.education!=='')html = html + app.getProfileLine("השכלה", user.education);
 				if(user.occupation!== undefined && user.occupation!=='')html = html + app.getProfileLine("עיסוקי", user.occupation);
 				if(user.religion!== undefined && user.religion!=='')html = html + app.getProfileLine("דתי", user.religion);
+				if(user.lookingForIds !== undefined && user.lookingForIds !== '') html = html + app.getProfileLine("מה אני מחפש/ת", user.lookingForIds);
 				//if(user.economy!== undefined && user.economy!=='')html = html + app.getProfileLine("Situación Económica", user.economy);
 				//html = html + app.getProfileLine("דתי", user.religion);
 				if(user.about!== undefined && user.about!=='' && user.about!=null){
@@ -1838,6 +1862,17 @@ var app = {
 				html = html + profileButtonsTemplate + profileButtonsTemplate_2;
 
 				detailsContainer.html(html).trigger('create');
+
+				var hideFavButton = 0;
+                if(user.is_in_favorite_list){
+                	hideFavButton = 1;
+                }
+                var hideBlackButton = 0;
+                if(user.is_in_black_list){
+                	hideBlackButton = 1;
+                }
+                detailsContainer.find('.favi'  + hideFavButton).hide();
+                detailsContainer.find('.black'  + hideBlackButton).hide();
 
 				app.container.find('.pic_wrap').click(function(){
                 	document.removeEventListener("backbutton", app.back, false);
@@ -1903,7 +1938,7 @@ var app = {
         	app.startLoading();
         }
 
-        app.itemsPerPage = 20;
+        //app.itemsPerPage = 20;
 
 		$.ajax({
 			url: app.apiUrl + '/api/v3/user/contacts/perPage:' + app.itemsPerPage + '/page:' + app.pageNumber,
@@ -2392,7 +2427,7 @@ var app = {
 
 	register: function(){
 		app.showPage('register_page');
-		$('#header, #beforeHead').css({"position":"absolute"});
+		//$('#header, #beforeHead').css({"position":"absolute"});
 		$('#birthDate').html(app.getBithDate()).trigger('create');
 
 
@@ -2413,6 +2448,7 @@ var app = {
 
 		app.getRegions();
 		//app.getReligions();
+		$('#register_page').trigger('refresh');
 	},
 
 

@@ -6,14 +6,15 @@
 	direction:ltr;	
 }
 
-.ui-content{background: #292929;}
+.ui-content, .ui-page, body{background: #292929;}
 
 a{
 	text-decoration:none;
 }
 
 .page{
-	background:#000;
+	/*background:#000;*/
+	background: #292929;
 	position: relative;	
 	padding-top:50px;
 }
@@ -568,7 +569,7 @@ a{
 	color:#fff;
 	font-size:18px;
 	font-weight:bold;
-	text-shadow:2px 2px #000;
+	text-shadow:1px 2px #000;
 	padding: 0 55px 5px 45px;
 }
 
@@ -868,6 +869,7 @@ h1 span{
 	line-height:20px;
 	opacity:0.9;
 	border-radius: 10px 10px 0 0;
+	direction: rtl;
 	
 }
 
@@ -1294,9 +1296,10 @@ a .mail_section{
 
 .bg_white{
 	background: url("../images/login_form_bg.jpg") no-repeat top center #292929;
-	background-size:100% 100%;
-	width:100%;
-	height:100%;
+	background-size: cover;
+	width: 100%;
+	height: 100%;
+	margin-top: -25px;
 }
 
 .myProf{

@@ -103,7 +103,7 @@
         </div>
 
 
-        <div style="width:100%; height:70px;"></div>
+        <div style="width:100%; height:70px;background:#292929;"></div>
 
 
         <!--Start Login Page -->
@@ -129,8 +129,8 @@
 			</div>			
 		</div>
 		<!--End Login Page -->
-		
-		
+
+
 		<!-- Start Recovery Page -->
 		<div id="recovery_page" class="appPage">
 			<div data-role="content" data-scroll="false">
@@ -167,7 +167,7 @@
 		                <li onclick="app.pageNumber= 1; app.getMessenger();"><a href="" title="title" id="massBox">תיבת הודעות</a></li>
 		                <li onclick="app.getStatUsers('lookedMe');"><a href="" title="title" id="watchMe">צפו בי</a></li>
 		                <li onclick="app.getUsersForLikes();"><a href="" title="title" id="like_but">הזירה</a><div class="new"></div></li>
-		                <li onclick="app.getStatUsers('contactedMe');"><a href="" title="title" id="contactedThem">פניתי אליהם</a></li>
+		                <li onclick="app.getStatUsers('contactedThem');"><a href="" title="title" id="contactedThem">פניתי אליהם</a></li>
                         <li onclick="app.getStatUsers('friends');"><a href="" title="title" id="myFavorite">המועדפים שלי</a></li>
                         <li onclick="app.getStatUsers('looked');"><a href="" title="title" id="Iwatch">צפיתי בהם</a></li>
 		                <li onclick="app.getEditProfile();"><a href="" title="title" id="editPro">עדכון פרופיל</a></li>
@@ -243,8 +243,8 @@
 							<div class="stat_value" onclick="if($(this).text()!='0')app.getStatUsers('addedMeToFriends');">154</div>
 						</div>
 						<div class="items_wrap">
-							<div class="stat_title" onclick="if($(this).next().text()!='0')app.getStatUsers('contactedMe');">פניתי אליהם<!-- Contacted You --></div>
-							<div class="stat_value" onclick="if($(this).text()!='0')app.getStatUsers('contactedMe');">229</div>
+							<div class="stat_title" onclick="if($(this).next().text()!='0')app.getStatUsers('contactedThem');">פניתי אליהם<!-- Contacted You --></div>
+							<div class="stat_value" onclick="if($(this).text()!='0')app.getStatUsers('contactedThem');">229</div>
 						</div>
 						<div class="items_wrap">
 							<div class="stat_title" onclick="if($(this).next().text()!='0')app.getStatUsers('looked');"><!-- Viewed Your Profile -->צפיתי בהם</div>
@@ -261,8 +261,8 @@
 							<div class="stat_value" onclick="if($(this).text()!='0')app.getStatUsers('blackList');">118</div>
 						</div>
 						<div class="items_wrap">
-							<div class="stat_title" onclick="if($(this).next().text()!='0')app.getStatUsers('contactedThem');">פנו אלי<!-- Contacted --></div> 
-							<div class="stat_value" onclick="if($(this).text()!='0')app.getStatUsers('contactedThem');">3</div>
+							<div class="stat_title" onclick="if($(this).next().text()!='0')app.getStatUsers('contactedMe');">פנו אלי<!-- Contacted --></div>
+							<div class="stat_value" onclick="if($(this).text()!='0')app.getStatUsers('contactedMe');">3</div>
 						</div>
 					</div>
 				</div>
@@ -635,7 +635,7 @@
 							</div>
 							<div class="clear"></div>
 
-							<div class="regTxt lineHeight_50">הרגלי עישון</div>
+							<div class="regTxt mar_top_8">הרגלי עישון</div>
 							<div class="regInput smokingList">
 
 							</div>
@@ -1002,6 +1002,14 @@
 			<div id="userProfileButtonsTemplate">
 				<button onclick="app.getChat([USER_ID],'[USERNICK]');" data-theme="a">שליחת הודעה</button>	  					
 				<div class="clear"></div>
+				<div class="favi0">
+					<button onclick="app.manageLists('favi', 0, [USER_ID]);" data-theme="a">להסיר מהמועדפים</button>
+				</div>
+				<div class="clear"></div>
+				<div class="favi1">
+					<button onclick="app.manageLists('favi', 1, [USER_ID]);" data-theme="a">הוסף למועדפים</button>
+				</div>
+				<div class="clear"></div>
 				<br />
 			</div>
 			<!-- END User Profile Buttons Template -->
@@ -1010,6 +1018,14 @@
 			<!-- START User Profile Buttons Template 2-->
 			<div id="userProfileButtonsTemplate_2">
 				<button onclick="app.showPage('report_abuse_page')" data-theme="a">דווחו למערכת על כרטיס לא תקין</button>
+				<div class="clear"></div>
+				<div class="black1">
+					<button onclick="app.manageLists('black', 1, [USER_ID]);" data-theme="a">הוסף לרשימה השחורה</button>
+				</div>
+				<div class="clear"></div>
+				<div class="black0">
+					<button onclick="app.manageLists('black', 0, [USER_ID]);" data-theme="a">להסיר מהרשימה השחורה</button>
+				</div>
 				<div class="clear"></div>
 				<br />
 			</div>
