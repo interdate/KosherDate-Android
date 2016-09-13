@@ -1691,6 +1691,34 @@ var app = {
 		});
 	},
 
+	manageLists: function(list, act, userId){
+        app.startLoading();
+        $.ajax({
+            url: app.apiUrl+'/api/v3/user/managelists/'+ list + '/' + act + '/' + userId,
+            type: 'Post',
+            contentType: "application/json; charset=utf-8",
+            error: function(response){
+           		alert(JSON.stringify(response));
+           	},
+            success: function(response, status, xhr){
+
+                //alert(JSON.stringify(response));
+                //return;
+
+                if(response.success){
+                    app.alert(response.success);
+                    app.container.find('.' + list + act).hide();
+                    if(act == '1'){
+                        app.container.find('.' + list + '0').show();
+                    }else{
+                        app.container.find('.' + list + '1').show();
+                    }
+                }
+                app.stopLoading();
+            }
+        });
+    },
+
 	getUserProfile: function(userId){
 		if(userId==window.localStorage.getItem("userId")){app.getMyProfileData(); return;}
 		app.ajaxSetup();
